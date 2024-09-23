@@ -1,22 +1,31 @@
-﻿using Entities;
+﻿using System.Text.Json;
+using Entities;
 using RepositoryContracts;
 
 namespace InMemoryRepositories;
 
-public class PostInMemoryRepository : IPostRepository
+public class PostFileRepository : IPostRepository
 {
-    private List<Post> posts = new List<Post>();
+    private const string filePath = "posts.json";
+    private List<Post> posts = JsonSerializer.Deserialize<List<Post>>(File.ReadAllText(filePath)) ?? [];
     
-    public Task<Post> AddAsync(Post post)
+    
+    public PostFileRepository()
+    {
+        
+    }
+    
+    public async Task<Post> AddAsync(Post post)
     {
         post.Id = posts.Any()
             ? posts.Max(p => p.Id) + 1
             : 1;
         posts.Add(post);
-        return Task.FromResult(post);
+        await Save();
+        return post;
     }
     
-    public Task UpdateAsync(Post post)
+    public async Task UpdateAsync(Post post)
     {
         Post? existingPost = posts.SingleOrDefault(p => p.Id == post.Id);
         if (existingPost is null)
@@ -28,10 +37,10 @@ public class PostInMemoryRepository : IPostRepository
         posts.Remove(existingPost);
         posts.Add(post);
         
-        return Task.CompletedTask;
+        await Save();
     }
 
-    public Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id)
     {
         Post? postToRemove = posts.SingleOrDefault(p => p.Id == id);
         if (postToRemove is null)
@@ -41,10 +50,10 @@ public class PostInMemoryRepository : IPostRepository
         }
 
         posts.Remove(postToRemove);
-        return Task.CompletedTask;
+        await Save();
     }
 
-    public Task<Post> GetSingleAsync(int id)
+    public async Task<Post> GetSingleAsync(int id)
     {
         Post? postToReturn = posts.SingleOrDefault(p => p.Id == id);
         if (postToReturn is null)
@@ -53,11 +62,21 @@ public class PostInMemoryRepository : IPostRepository
                 $"Post with ID {id} not found");
         }
         
-        return Task.FromResult(postToReturn);
+        await Save();
+        return postToReturn;
     }
 
     public IQueryable<Post> GetMany()
     {
         return posts.AsQueryable();
+    }
+    
+    private async Task Save() {
+        try {
+            await File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(posts));
+        }
+        catch (Exception) {
+            throw new IOException("Couldn't save changes!");
+        }
     }
 }
