@@ -1,0 +1,18 @@
+﻿@page "/createpost"
+@inject IPostService PostService
+
+<h3>Create New Post</h3>
+<EditForm Model="post" OnValidSubmit="HandleSubmit">
+    <InputText @bind-Value="post.Title" placeholder="Post Title" />
+    <InputTextArea @bind-Value="post.Body" placeholder="Post Content" />
+    <button type="submit">Create Post</button>
+</EditForm>
+
+@code {
+    private CreatePostDto post = new();
+
+    private async Task HandleSubmit()
+    {
+        await PostService.AddPostAsync(post);
+    }
+}

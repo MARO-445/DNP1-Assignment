@@ -1,0 +1,37 @@
+﻿@page "/posts/{PostId:int}"
+@inject IPostService PostService
+
+<h3>@post?.Title</h3>
+<p>@post?.Body</p>
+<p>Author: @post?.AuthorName</p>
+
+<h4>Comments</h4>
+<ul>
+    @foreach (var comment in post?.Comments ?? new List<CommentDto>())
+    {
+    <li>@comment.Content</li>
+    }
+</ul>
+
+<EditForm Model="newComment" OnValidSubmit="HandleCommentSubmit">
+    <InputTextArea @bind-Value="newComment.Content" placeholder="Add a comment" />
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+[Parameter] public int PostId { get; set; }
+private PostDto? post;
+private CreateCommentDto newComment = new();
+
+protected override async Task OnInitializedAsync()
+{
+post = await PostService.GetPostByIdAsync(PostId);
+}
+
+private async Task HandleCommentSubmit()
+{
+await PostService.AddCommentAsync(PostId, newComment);
+newComment = new();
+post = await PostService.GetPostByIdAsync(PostId); // Refresh comments
+}
+}
