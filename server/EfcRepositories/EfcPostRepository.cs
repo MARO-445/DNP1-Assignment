@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace EfcRepositories;
-
 public class EfcPostRepository : IPostRepository
 {
     private readonly AppContext _context;

@@ -1,6 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{D0B14AE0-A7CD-402F-8096-16CB6C6244E0}"
+	ProjectSection(SolutionItems) = preProject
+		server\EfcRepositories\EfcRepositories.csproj = server\EfcRepositories\EfcRepositories.csproj
+		server\EfcRepositories\EfcPostRepository.cs = server\EfcRepositories\EfcPostRepository.cs
+		server\EfcRepositories\EfcUserRepository.cs = server\EfcRepositories\EfcUserRepository.cs
+		server\EfcRepositories\EfcCommentRepository.cs = server\EfcRepositories\EfcCommentRepository.cs
+		server\EfcRepositories\AppContext.cs = server\EfcRepositories\AppContext.cs
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{B1B5AC3B-1E40-46DB-8599-378E0EC32C33}"
 EndProject
